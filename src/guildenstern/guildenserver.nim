@@ -111,19 +111,13 @@ proc handleRead*(gs: ptr GuildenServer, data: ptr SocketData) =
 proc closeSocket*(ctx: Ctx) {.raises: [].} =
   try:
     when defined(fulldebug): echo "closing ctx socket: ", ctx.socketdata.socket
+    # ctx.socketdata is zero'ed during unregister(), so need to save `fd`
+    let fd = ctx.socketdata.socket
     if ctx.gs.selector.contains(ctx.socketdata.socket): ctx.gs.selector.unregister(ctx.socketdata.socket)
-    # finally got it?
-    ctx.socketdata.socket.close()
+    fd.close()
     ctx.socketdata.socket = osInvalidSocket
   except:
     if defined(fulldebug): echo "close error: ", getCurrentExceptionMsg()
-
-proc unregister*(ctx: Ctx) {.raises: [].} =
-  try:
-    if ctx.gs.selector.contains(ctx.socketdata.socket): ctx.gs.selector.unregister(ctx.socketdata.socket)
-  except:
-    if defined(fulldebug): echo "unregister error: ", getCurrentExceptionMsg()
-
 
 proc closeSocket*(gs: ptr GuildenServer, socket: SocketHandle) {.raises: [].} =
   try:

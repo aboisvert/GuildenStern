@@ -20,7 +20,8 @@ proc process(gs: ptr GuildenServer, fd: posix.SocketHandle, data: ptr SocketData
     if gs.selector.contains(fd):
       try: gs.selector.updateHandle(fd, {Event.Read})
       except: echo "addHandle error: " & getCurrentExceptionMsg()
-    else: fd.close()
+    else:
+      when defined(fulldebug): echo "socket no longer registered: ", fd
 
 
 proc handleAccept(gs: ptr GuildenServer, fd: posix.SocketHandle, data: ptr SocketData) =
