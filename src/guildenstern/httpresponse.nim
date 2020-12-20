@@ -6,6 +6,7 @@ from strutils import join
 
 const
   DONTWAIT = 0x40.cint
+  MSG_NOSIGNAL = 0x4000.cint # ARM only
   intermediateflags = MSG_NOSIGNAL + 0x8000 # MSG_MORE
   lastflag = MSG_NOSIGNAL
 
